@@ -4,6 +4,7 @@ import Hero from "./components/Hero";
 import UploadSection from "./components/UploadSection";
 import ResultsDisplay from "./components/ResultsDisplay";
 import LoadingScreen from "./components/LoadingScreen";
+import Footer from "./components/Footer";
 
 // Expanded icon set for better density
 const MEDICAL_ICONS = [
@@ -80,6 +81,7 @@ export default function App() {
         {!result && !loading && <><Hero /><UploadSection onAnalyze={handleAnalysis} error={error} /></>}
         {loading && <LoadingScreen />}
         {result && <ResultsDisplay result={result} onReset={() => { setResult(null); setError(null); }} />}
+        <Footer />
       </div>
     </div>
   );
