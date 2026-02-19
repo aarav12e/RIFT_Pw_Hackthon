@@ -5,9 +5,9 @@ export default function Header({ theme, toggleTheme }) {
     <header className="relative z-50 border-b border-[var(--border-color)]">
       <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm text-white shadow-lg"
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm text-white shadow-lg overflow-hidden"
             style={{ background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))' }}>
-            Rx
+            <img src="/icon.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
           <div>
             <h1 className="font-bold text-lg leading-none" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-primary)' }}>
