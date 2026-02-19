@@ -21,7 +21,7 @@ function FloatingIcons() {
         const left = Math.floor(Math.random() * 100);
         const duration = 15 + Math.random() * 20; // 15-35s
         const delay = Math.random() * 20; // 0-20s
-        const size = 24 + Math.random() * 24; // 24-48px
+        const size = 24 + Math.random() * 30; // 24-48px
 
         return (
           <div key={i} className="medical-icon" style={{
