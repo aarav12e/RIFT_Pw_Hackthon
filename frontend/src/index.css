@@ -1,6 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-* { box-sizing: border-box; }
-body { margin: 0; }
+:root {
+  /* Default Dark Theme (Navy/Blue) */
+  --bg-primary: #050d1f;
+  --bg-secondary: #0a1628;
+  --text-primary: #f8faff;
+  --text-secondary: rgba(248,250,255,0.6);
+  --accent-primary: #2563eb;
+  --accent-secondary: #0ea5e9;
+  --accent-tertiary: #3b82f6;
+  --border-color: rgba(255,255,255,0.08);
+  --card-bg: rgba(255,255,255,0.04);
+  --card-hover: rgba(255,255,255,0.07);
+  --glass-border: rgba(255,255,255,0.08);
+  --shadow-color: rgba(0,0,0,0.4);
+  
+  /* Icon variables */
+  --icon-opacity: 0.15;
+  --icon-color: rgba(37,99,235,0.5); /* Blue-ish for dark mode */
+}
+
+/* Light Theme (White/Green) */
+[data-theme="light"] {
+  --bg-primary: #f0fdf4; /* Very light green/white */
+  --bg-secondary: #ffffff;
+  --text-primary: #052e16; /* Dark Green/Black */
+  --text-secondary: #166534;
+  --accent-primary: #16a34a; /* Green-600 */
+  --accent-secondary: #22c55e; /* Green-500 */
+  --accent-tertiary: #4ade80; /* Green-400 */
+  --border-color: rgba(22,163,74,0.15);
+  --card-bg: rgba(255,255,255,0.6);
+  --card-hover: rgba(255,255,255,0.8);
+  --glass-border: rgba(22,163,74,0.2);
+  --shadow-color: rgba(22,163,74,0.15);
+
+  --icon-opacity: 0.12;
+  --icon-color: rgba(22,163,74,0.4); /* Green-ish for light mode */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Background Gradients */
+.bg-medical {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  transition: opacity 0.5s ease;
+}
+
+[data-theme="dark"] .bg-medical {
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 30%, rgba(37,99,235,0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 85% 70%, rgba(14,165,233,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 50% 100%, rgba(26,58,110,0.3) 0%, transparent 70%),
+    var(--bg-primary);
+}
+
+[data-theme="light"] .bg-medical {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(34,197,94,0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(74,222,128,0.15) 0%, transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    var(--bg-primary);
+}
+
+/* Floating medical icons */
+.medical-icon {
+  position: fixed;
+  pointer-events: none;
+  animation: floatMedical linear infinite;
+  opacity: 0;
+  color: var(--text-primary); /* Inherit or specific */
+  filter: drop-shadow(0 0 8px var(--icon-color));
+  z-index: 1;
+}
+
+@keyframes floatMedical {
+  0%   { transform: translateY(110vh) rotate(0deg) scale(0.6); opacity: 0; }
+  10%  { opacity: var(--icon-opacity); }
+  50%  { transform: translateY(50vh) rotate(180deg) scale(1.1); opacity: var(--icon-opacity); }
+  90%  { opacity: var(--icon-opacity); }
+  100% { transform: translateY(-10vh) rotate(360deg) scale(0.6); opacity: 0; }
+}
+
+/* Grid overlay */
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--border-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.4;
+}
+
+/* Glass card */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px 0 var(--shadow-color);
+}
+.card:hover {
+  background: var(--card-hover);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px 0 var(--shadow-color);
+}
+
+/* Accents & Buttons */
+.accent-text { color: var(--accent-primary); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px 0 rgba(0,0,0,0.2);
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(0,0,0,0.25);
+  filter: brightness(1.1);
+}
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Upload Zone */
+.upload-zone {
+  border: 2px dashed var(--border-color);
+  background: var(--bg-secondary);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent-primary);
+  background: var(--card-hover);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
+}
+.theme-toggle:hover {
+  background: var(--card-hover);
+  transform: rotate(15deg);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--accent-secondary); border-radius: 3px; }
+
+/* Animations */
+.animate-float-slow { animation: floatMedical 20s linear infinite; }
+.animate-float-medium { animation: floatMedical 15s linear infinite; }
+.animate-float-fast { animation: floatMedical 10s linear infinite; }
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.02em; }

@@ -1,6 +1,20 @@
 import { useState, useRef } from "react";
 
-const SUPPORTED_DRUGS = ["CODEINE", "WARFARIN", "CLOPIDOGREL", "SIMVASTATIN", "AZATHIOPRINE", "FLUOROURACIL"];
+const DRUGS = [
+  { name: "CODEINE", gene: "CYP2D6", desc: "Opioid analgesic. Poor metabolizers get no pain relief; ultrarapid metabolizers risk respiratory depression from excess morphine." },
+  { name: "WARFARIN", gene: "CYP2C9", desc: "Blood thinner. Poor metabolizers clear it slowly — leading to dangerous bleeding risk at standard doses." },
+  { name: "CLOPIDOGREL", gene: "CYP2C19", desc: "Anti-platelet drug. Poor metabolizers cannot activate this prodrug, leaving patients unprotected against heart attacks." },
+  { name: "SIMVASTATIN", gene: "SLCO1B1", desc: "Cholesterol drug. Poor transporters accumulate simvastatin in the blood, causing muscle damage (myopathy)." },
+  { name: "AZATHIOPRINE", gene: "TPMT", desc: "Immunosuppressant. TPMT-deficient patients accumulate toxic metabolites — risk of fatal bone marrow failure." },
+  { name: "FLUOROURACIL", gene: "DPYD", desc: "Chemotherapy. DPYD-deficient patients cannot break down the drug — standard doses cause life-threatening toxicity." },
+];
+
+const SAMPLES = [
+  { tag: "✅ Safe", label: "Normal Patient", drug: "CODEINE", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_NM\nchr22\t42522613\trs16947\tC\tT\t99\tPASS\tGENE=CYP2D6;STAR=*2\tGT\t0|0` },
+  { tag: "☠️ Toxic", label: "Codeine Toxic", drug: "CODEINE", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_PM\nchr22\t42522613\trs3892097\tG\tA\t99\tPASS\tGENE=CYP2D6;STAR=*4\tGT\t1|1\nchr22\t42523943\trs35742686\tC\tT\t99\tPASS\tGENE=CYP2D6;STAR=*3\tGT\t0|1` },
+  { tag: "⚠️ Adjust", label: "Warfarin Adjust", drug: "WARFARIN", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_IM\nchr10\t94942290\trs1799853\tC\tT\t99\tPASS\tGENE=CYP2C9;STAR=*2\tGT\t0|1\nchr10\t94981296\trs1057910\tA\tC\t99\tPASS\tGENE=CYP2C9;STAR=*3\tGT\t0|1` },
+  { tag: "🔴 Critical", label: "Fluorouracil Critical", drug: "FLUOROURACIL", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_DPYD\nchr1\t97915614\trs3918290\tC\tT\t99\tPASS\tGENE=DPYD;STAR=*2A\tGT\t1|1\nchr1\t97981343\trs55886062\tA\tT\t99\tPASS\tGENE=DPYD;STAR=*13\tGT\t0|1` },
+];
 
 export default function UploadSection({ onAnalyze, error }) {
   const [vcfFile, setVcfFile] = useState(null);
@@ -9,118 +23,125 @@ export default function UploadSection({ onAnalyze, error }) {
   const fileRef = useRef();
 
   const handleDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
+    e.preventDefault(); setDragging(false);
     const file = e.dataTransfer.files[0];
-    if (file && file.name.endsWith(".vcf")) setVcfFile(file);
+    if (file?.name.endsWith(".vcf")) setVcfFile(file);
     else alert("Please upload a .vcf file");
   };
 
-  const toggleDrug = (drug) => {
-    setSelectedDrugs((prev) =>
-      prev.includes(drug) ? prev.filter((d) => d !== drug) : [...prev, drug]
-    );
+  const toggleDrug = (drug) => setSelectedDrugs(p => p.includes(drug) ? p.filter(d => d !== drug) : [...p, drug]);
+
+  const loadSample = (s) => {
+    const blob = new Blob([s.content], { type: "text/plain" });
+    setVcfFile(new File([blob], `${s.label.replace(/ /g, "_")}.vcf`));
+    setSelectedDrugs([s.drug]);
   };
 
-  const handleSubmit = () => {
-    if (!vcfFile) return alert("Please upload a VCF file");
-    if (selectedDrugs.length === 0) return alert("Select at least one drug");
-    onAnalyze(vcfFile, selectedDrugs.join(","));
-  };
+  const isSelected = (drug) => selectedDrugs.includes(drug);
 
   return (
-    <div className="space-y-8">
-      {/* Hero */}
-      <div className="text-center space-y-3 py-6">
-        <div className="inline-block px-3 py-1 rounded-full border border-emerald-800 text-emerald-400 text-xs mb-2">
-          RIFT 2026 Hackathon · HealthTech Track
-        </div>
-        <h2 className="text-4xl font-bold text-white tracking-tight">
-          Predict Drug Risk<br />
-          <span className="text-emerald-400">From Your Genome</span>
-        </h2>
-        <p className="text-gray-400 max-w-lg mx-auto text-sm leading-relaxed">
-          Upload a VCF genetic file and select a drug. PharmaGuard analyzes your pharmacogenomic profile
-          and predicts personalized drug risks using CPIC guidelines + AI explanations.
+    <div className="max-w-5xl mx-auto px-6 pb-16 relative z-10 space-y-6">
+
+      {/* Quick load */}
+      <div className="card rounded-2xl p-5" style={{ background: 'var(--card-bg)' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text-secondary)' }}>
+          ⚡ Quick Load Sample VCF
         </p>
-      </div>
-
-      {/* Upload Zone */}
-      <div
-        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={handleDrop}
-        onClick={() => fileRef.current.click()}
-        className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all duration-200
-          ${dragging ? "border-emerald-400 bg-emerald-950/30" : "border-gray-700 hover:border-emerald-700 bg-gray-900/40"}`}
-      >
-        <input
-          ref={fileRef}
-          type="file"
-          accept=".vcf"
-          className="hidden"
-          onChange={(e) => setVcfFile(e.target.files[0])}
-        />
-        <div className="text-4xl mb-3">🧬</div>
-        {vcfFile ? (
-          <div>
-            <p className="text-emerald-400 font-bold">{vcfFile.name}</p>
-            <p className="text-gray-500 text-sm mt-1">{(vcfFile.size / 1024).toFixed(1)} KB · Click to change</p>
-          </div>
-        ) : (
-          <div>
-            <p className="text-gray-300 font-medium">Drop your VCF file here</p>
-            <p className="text-gray-500 text-sm mt-1">or click to browse · .vcf format · max 5MB</p>
-          </div>
-        )}
-      </div>
-
-      {/* Drug Selection */}
-      <div>
-        <p className="text-gray-400 text-sm mb-3 font-medium">Select Drug(s) to Analyze</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {SUPPORTED_DRUGS.map((drug) => (
-            <button
-              key={drug}
-              onClick={() => toggleDrug(drug)}
-              className={`px-4 py-3 rounded-lg border text-sm font-medium transition-all duration-150 text-left
-                ${selectedDrugs.includes(drug)
-                  ? "border-emerald-500 bg-emerald-950/50 text-emerald-300"
-                  : "border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300"}`}
-            >
-              <div className="font-bold">{drug}</div>
-              <div className="text-xs opacity-60 mt-0.5">{getDrugGene(drug)}</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {SAMPLES.map((s) => (
+            <button key={s.label} onClick={() => loadSample(s)}
+              className="rounded-xl px-4 py-3 text-left transition-colors duration-200"
+              style={{ background: 'var(--card-hover)', border: '1px solid var(--glass-border)' }}>
+              <div className="text-sm font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>{s.tag}</div>
+              <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>{s.label}</div>
             </button>
           ))}
         </div>
       </div>
 
+      {/* Upload zone */}
+      <div
+        className={`upload-zone rounded-2xl p-14 text-center ${dragging ? 'drag-over' : ''}`}
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={handleDrop}
+        onClick={() => fileRef.current.click()}
+      >
+        <input ref={fileRef} type="file" accept=".vcf" className="hidden"
+          onChange={(e) => setVcfFile(e.target.files[0])} />
+        {vcfFile ? (
+          <div>
+            <div className="text-4xl mb-3">🧬</div>
+            <p className="font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>{vcfFile.name}</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Ready to analyze · Click to change file</p>
+            <div className="inline-block mt-3 px-3 py-1 rounded-full text-xs font-medium text-emerald-400"
+              style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)' }}>
+              VCF File Loaded ✓
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className="text-5xl mb-4">🧬</div>
+            <p className="font-semibold text-lg mb-1" style={{ color: 'var(--text-primary)' }}>Drop your VCF file here</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>or click to browse · .vcf format · max 5MB</p>
+          </div>
+        )}
+      </div>
+
+      {/* Drug selection */}
+      <div>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-1 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] rounded-full" />
+          <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Select Drug(s) to Analyze</p>
+          {selectedDrugs.length > 0 &&
+            <span className="ml-auto text-xs font-medium accent-text">{selectedDrugs.length} selected</span>}
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {DRUGS.map(({ name, gene, desc }) => (
+            <div key={name} className="tooltip">
+              <button onClick={() => toggleDrug(name)}
+                className={`w-full rounded-2xl px-5 py-4 text-left transition-all duration-200 border`}
+                style={{
+                  background: isSelected(name) ? 'rgba(37,99,235,0.1)' : 'var(--card-bg)', // Slight tint for selection
+                  borderColor: isSelected(name) ? 'var(--accent-primary)' : 'var(--glass-border)',
+                  boxShadow: isSelected(name) ? '0 0 15px var(--shadow-color)' : 'none'
+                }}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className={`font-bold text-sm ${isSelected(name) ? 'accent-text' : ''}`}
+                    style={{ color: isSelected(name) ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
+                    {name}
+                  </span>
+                  {isSelected(name) && <span className="text-xs accent-text">✓</span>}
+                </div>
+                <div className="text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>{gene}</div>
+              </button>
+              <div className="tip">
+                <strong style={{ color: 'var(--text-primary)' }}>{name}</strong><br />{desc}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {error && (
-        <div className="bg-red-950/40 border border-red-800 rounded-lg p-4 text-red-400 text-sm">
+        <div className="rounded-xl p-4 text-sm text-red-400"
+          style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)' }}>
           ⚠ {error}
         </div>
       )}
 
-      <button
-        onClick={handleSubmit}
-        disabled={!vcfFile || selectedDrugs.length === 0}
-        className="w-full py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold text-base
-          transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
-      >
-        Analyze Pharmacogenomic Risk →
+      <button onClick={() => onAnalyze(vcfFile, selectedDrugs.join(","))}
+        disabled={!vcfFile || !selectedDrugs.length}
+        className="btn-primary w-full py-4 rounded-2xl text-base font-bold shadow-lg ring-1 ring-white/10"
+        style={{ color: '#fff' }}>
+        {vcfFile && selectedDrugs.length
+          ? `Analyze ${selectedDrugs.length} Drug${selectedDrugs.length > 1 ? 's' : ''} →`
+          : 'Upload VCF & Select Drug to Continue'}
       </button>
 
-      <p className="text-center text-gray-600 text-xs">
-        For research and educational purposes only. Not for clinical diagnosis.
+      <p className="text-center text-xs" style={{ color: 'var(--text-secondary)' }}>
+        For research and educational purposes only · Not intended for clinical diagnosis
       </p>
     </div>
   );
-}
-
-function getDrugGene(drug) {
-  const map = {
-    CODEINE: "CYP2D6", WARFARIN: "CYP2C9", CLOPIDOGREL: "CYP2C19",
-    SIMVASTATIN: "SLCO1B1", AZATHIOPRINE: "TPMT", FLUOROURACIL: "DPYD"
-  };
-  return map[drug] || "";
 }
