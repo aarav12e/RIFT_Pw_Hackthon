@@ -1,89 +1,66 @@
 import os
 import json
-import google.generativeai as genai
-from typing import Dict, List
+import urllib.request
+import urllib.error
 
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
 
-def generate_clinical_explanation(
-    drug: str,
-    gene: str,
-    phenotype: str,
-    diplotype: str,
-    risk_label: str,
-    severity: str,
-    detected_variants: List[Dict],
-    recommendation: str,
-    mechanism: str
-) -> Dict:
-    """
-    Generate LLM-powered clinical explanation using Google Gemini.
-    Returns structured explanation with summary, mechanism, and patient-friendly text.
-    """
-    variant_list = ", ".join([v.get("rsid", "unknown") for v in detected_variants]) if detected_variants else "No pharmacogenomic variants detected"
-    star_alleles = ", ".join([v.get("star_allele", "unknown") for v in detected_variants]) if detected_variants else "*1/*1 (reference)"
+def generate_clinical_explanation(drug, gene, phenotype, diplotype, risk_label, severity, detected_variants, recommendation, mechanism):
+    variant_list = ", ".join([v.get("rsid", "unknown") for v in detected_variants]) if detected_variants else "No variants detected"
 
-    prompt = f"""You are a clinical pharmacogenomics expert. Generate a structured clinical explanation for the following patient case.
+    prompt = f"""You are a clinical pharmacogenomics expert. Generate a structured clinical explanation.
 
-PATIENT PHARMACOGENOMIC PROFILE:
+PATIENT PROFILE:
 - Drug: {drug}
-- Primary Gene: {gene}
+- Gene: {gene}
 - Diplotype: {diplotype}
 - Phenotype: {phenotype} (PM=Poor Metabolizer, IM=Intermediate, NM=Normal, RM=Rapid, URM=Ultrarapid)
-- Risk Assessment: {risk_label} (Severity: {severity})
-- Detected Variants: {variant_list}
-- Star Alleles: {star_alleles}
-- Biological Mechanism: {mechanism}
-- Clinical Recommendation: {recommendation}
+- Risk: {risk_label} (Severity: {severity})
+- Variants: {variant_list}
+- Mechanism: {mechanism}
+- Recommendation: {recommendation}
 
-Generate a JSON response with EXACTLY these fields:
+Return ONLY valid JSON with these exact fields:
 {{
-  "summary": "2-3 sentence clinical summary citing specific variants and their impact on {drug} therapy",
-  "mechanism_explanation": "Detailed explanation of how {gene} variants affect {drug} metabolism/transport at molecular level",
-  "patient_friendly": "Simple 2-3 sentence explanation for a patient without medical background",
-  "clinical_significance": "Why this finding matters clinically and what happens if ignored",
-  "monitoring_parameters": "Specific lab tests or clinical parameters to monitor",
-  "alternative_drugs": "Specific alternative medications to consider if applicable"
-}}
+  "summary": "2-3 sentence clinical summary citing specific variants",
+  "mechanism_explanation": "Molecular explanation of how {gene} variants affect {drug}",
+  "patient_friendly": "Simple explanation for a patient without medical background",
+  "clinical_significance": "Why this finding matters clinically",
+  "monitoring_parameters": "Specific lab tests or parameters to monitor",
+  "alternative_drugs": "Specific alternative medications if applicable"
+}}"""
 
-Be specific, cite the exact variants ({variant_list}), and reference CPIC guidelines. Return ONLY valid JSON."""
+    payload = json.dumps({
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 1000}
+    }).encode("utf-8")
 
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(prompt)
-        text = response.text.strip()
-
-        # Clean markdown code blocks if present
-        if text.startswith("```"):
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-        if text.endswith("```"):
-            text = text[:-3]
-
-        parsed = json.loads(text.strip())
-        return parsed
+        req = urllib.request.Request(
+            GEMINI_URL,
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=30) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            # Strip markdown if present
+            if "```" in text:
+                text = text.split("```")[1]
+                if text.startswith("json"):
+                    text = text[4:]
+            return json.loads(text.strip())
 
     except Exception as e:
         # Fallback if Gemini fails
         return {
-            "summary": f"Patient with {gene} {phenotype} phenotype (diplotype: {diplotype}) is predicted to have {risk_label.lower()} response to {drug}. Detected variants: {variant_list}.",
+            "summary": f"Patient with {gene} {phenotype} phenotype ({diplotype}) predicted to have {risk_label.lower()} response to {drug}. Detected variants: {variant_list}.",
             "mechanism_explanation": mechanism,
-            "patient_friendly": f"Your genetic profile suggests that {drug} may {'not work as expected' if risk_label == 'Ineffective' else 'cause side effects' if risk_label == 'Toxic' else 'need dose adjustment'} for you based on your {gene} gene variants.",
-            "clinical_significance": f"This {severity} severity finding requires {'immediate attention and drug change' if severity in ['critical', 'high'] else 'dose adjustment consideration'}.",
-            "monitoring_parameters": "Consult your clinical pharmacist for gene-specific monitoring recommendations.",
+            "patient_friendly": f"Your genetic profile suggests {drug} may need adjustment based on your {gene} gene variants.",
+            "clinical_significance": f"This {severity} severity finding requires clinical attention.",
+            "monitoring_parameters": "Consult clinical pharmacist for gene-specific monitoring.",
             "alternative_drugs": recommendation,
             "error": str(e)
         }
-
-
-def generate_mock_explanation(drug: str, gene: str, phenotype: str, risk_label: str) -> Dict:
-    """Fallback mock explanation when API is unavailable."""
-    return {
-        "summary": f"This patient carries {gene} variants consistent with a {phenotype} phenotype, predicting a {risk_label.lower()} response to {drug} therapy.",
-        "mechanism_explanation": f"The {gene} gene encodes a key enzyme/transporter involved in {drug} metabolism. Variants alter protein function, changing drug plasma levels.",
-        "patient_friendly": f"Your DNA test shows your body processes {drug} differently than average, which means your doctor may need to adjust your treatment.",
-        "clinical_significance": f"Without pharmacogenomic-guided dosing, this patient faces elevated risk of therapeutic failure or adverse drug reactions.",
-        "monitoring_parameters": "Complete blood count, liver function tests, and therapeutic drug monitoring as clinically indicated.",
-        "alternative_drugs": "Consult with a clinical pharmacist for CPIC-recommended alternatives."
-    }
