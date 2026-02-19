@@ -173,7 +173,7 @@ def determine_phenotype(variants: List[Dict], gene: str) -> str:
     if no_function_count >= 2:
         return "PM"
     elif no_function_count == 1 and decreased_count >= 1:
-        return "PM"
+        return "IM"
     elif no_function_count == 1:
         return "IM"
     elif decreased_count >= 2:
