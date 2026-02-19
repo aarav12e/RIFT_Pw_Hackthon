@@ -10,10 +10,10 @@ const DRUGS = [
 ];
 
 const SAMPLES = [
-  { tag: "✅ Safe", label: "Normal Patient", drug: "CODEINE", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_NM\nchr22\t42522613\trs16947\tC\tT\t99\tPASS\tGENE=CYP2D6;STAR=*2\tGT\t0|0` },
-  { tag: "☠️ Toxic", label: "Codeine Toxic", drug: "CODEINE", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_PM\nchr22\t42522613\trs3892097\tG\tA\t99\tPASS\tGENE=CYP2D6;STAR=*4\tGT\t1|1\nchr22\t42523943\trs35742686\tC\tT\t99\tPASS\tGENE=CYP2D6;STAR=*3\tGT\t0|1` },
-  { tag: "⚠️ Adjust", label: "Warfarin Adjust", drug: "WARFARIN", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_IM\nchr10\t94942290\trs1799853\tC\tT\t99\tPASS\tGENE=CYP2C9;STAR=*2\tGT\t0|1\nchr10\t94981296\trs1057910\tA\tC\t99\tPASS\tGENE=CYP2C9;STAR=*3\tGT\t0|1` },
-  { tag: "🔴 Critical", label: "Fluorouracil Critical", drug: "FLUOROURACIL", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_DPYD\nchr1\t97915614\trs3918290\tC\tT\t99\tPASS\tGENE=DPYD;STAR=*2A\tGT\t1|1\nchr1\t97981343\trs55886062\tA\tT\t99\tPASS\tGENE=DPYD;STAR=*13\tGT\t0|1` },
+  { tag: "✅ Normal", label: "Reference Genotype", drug: "WARFARIN", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_NM\nchr10\t94942290\trs1799853\tC\tT\t99\tPASS\tGENE=CYP2C9;STAR=*2\tGT\t0|0\nchr10\t94981296\trs1057910\tA\tC\t99\tPASS\tGENE=CYP2C9;STAR=*3\tGT\t0|0` },
+  { tag: "⚠️ Action", label: "Warfarin Dose Adjustment", drug: "WARFARIN", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_PM\nchr10\t94942290\trs1799853\tC\tT\t99\tPASS\tGENE=CYP2C9;STAR=*2\tGT\t0|1\nchr10\t94981296\trs1057910\tA\tC\t99\tPASS\tGENE=CYP2C9;STAR=*3\tGT\t0|1` },
+  { tag: "🔴 Risk", label: "Simvastatin High Risk", drug: "SIMVASTATIN", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_SLCO1B1\nchr12\t21151622\trs4149056\tT\tC\t99\tPASS\tGENE=SLCO1B1;STAR=*5\tGT\t0|1\nchr12\t21142512\trs11045819\tA\tG\t99\tPASS\tGENE=SLCO1B1;STAR=*14\tGT\t0|1` },
+  { tag: "☠️ Toxic", label: "Fluorouracil Contraindicated", drug: "FLUOROURACIL", content: `##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tPATIENT_DPYD\nchr1\t97915614\trs3918290\tC\tT\t99\tPASS\tGENE=DPYD;STAR=*2A\tGT\t0|1\nchr1\t97981343\trs55886062\tA\tT\t99\tPASS\tGENE=DPYD;STAR=*13\tGT\t0|1` },
 ];
 
 export default function UploadSection({ onAnalyze, error }) {
@@ -45,7 +45,7 @@ export default function UploadSection({ onAnalyze, error }) {
       {/* Quick load */}
       <div className="card rounded-2xl p-5" style={{ background: 'var(--card-bg)' }}>
         <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text-secondary)' }}>
-          ⚡ Quick Load Sample VCF
+          Load Predefined Clinical Scenarios
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {SAMPLES.map((s) => (
