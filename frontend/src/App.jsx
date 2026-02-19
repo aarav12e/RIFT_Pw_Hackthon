@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Lenis from 'lenis';
+import { Toaster } from 'react-hot-toast';
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import UploadSection from "./components/UploadSection";
@@ -99,6 +100,14 @@ export default function App() {
         {loading && <LoadingScreen />}
         {result && <ResultsDisplay result={result} onReset={() => { setResult(null); setError(null); }} />}
         <Footer />
+        <Toaster position="bottom-center" toastOptions={{
+          style: {
+            background: 'var(--card-bg)',
+            color: 'var(--text-primary)',
+            border: '1px solid var(--glass-border)',
+            backdropFilter: 'blur(10px)',
+          },
+        }} />
       </div>
     </div>
   );

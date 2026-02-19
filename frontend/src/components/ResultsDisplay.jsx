@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ConfidenceGauge from "./ConfidenceGauge";
+import toast from "react-hot-toast";
 
 const RISK = {
   "Safe": { color: "#10b981", emoji: "✅", label: "SAFE", bg: "rgba(16,185,129,0.07)", border: "rgba(16,185,129,0.25)" },
@@ -163,14 +164,13 @@ function ResultCard({ result, index }) {
 }
 
 export default function ResultsDisplay({ result, onReset }) {
-  const isMulti = !!result.multi_drug_analysis;
-  const analyses = isMulti ? result.multi_drug_analysis : [result];
+  const analyses = Array.isArray(result) ? result : [result];
 
   const downloadJSON = () => {
     const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url;
-    a.download = `pharmaguard_${result.patient_id}_${Date.now()}.json`;
+    a.download = `pharmaguard_${analyses[0]?.patient_id || "report"}_${Date.now()}.json`;
     a.click(); URL.revokeObjectURL(url);
   };
 
@@ -180,10 +180,13 @@ export default function ResultsDisplay({ result, onReset }) {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-2xl font-extrabold" style={{ color: 'var(--text-primary)' }}>Analysis Complete</h2>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{result.patient_id} · {analyses.length} drug{analyses.length > 1 ? "s" : ""} analyzed</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{analyses[0]?.patient_id} · {analyses.length} drug{analyses.length > 1 ? "s" : ""} analyzed</p>
         </div>
         <div className="flex flex-wrap gap-2 no-print">
-          <button onClick={() => navigator.clipboard.writeText(JSON.stringify(result, null, 2))}
+          <button onClick={() => {
+            navigator.clipboard.writeText(JSON.stringify(result, null, 2));
+            toast.success("JSON copied to clipboard!");
+          }}
             className="px-4 py-2 text-xs font-semibold rounded-xl card transition"
             style={{ color: 'var(--text-secondary)', background: 'var(--card-bg)', border: '1px solid var(--glass-border)' }}>
             📋 Copy JSON
@@ -211,9 +214,7 @@ export default function ResultsDisplay({ result, onReset }) {
         {analyses.map((r, i) => <ResultCard key={i} result={r} index={i} />)}
       </div>
 
-      <p className="text-center text-xs pt-2" style={{ color: 'var(--text-secondary)' }}>
-        PharmaGuard · CPIC-aligned · RIFT 2026 Hackathon · For research use only
-      </p>
+
     </div>
   );
 }
