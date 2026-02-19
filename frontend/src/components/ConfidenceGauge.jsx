@@ -16,7 +16,7 @@ export default function ConfidenceGauge({ score, color }) {
     <div className="flex flex-col items-center gap-1">
       <div className="relative w-24 h-24">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="7" />
+          <circle cx="50" cy="50" r={r} fill="none" stroke="var(--glass-border)" strokeWidth="7" />
           <circle cx="50" cy="50" r={r} fill="none"
             stroke={color} strokeWidth="7" strokeLinecap="round"
             strokeDasharray={circ} strokeDashoffset={offset}
@@ -24,8 +24,8 @@ export default function ConfidenceGauge({ score, color }) {
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xl font-extrabold text-white">{pct}%</span>
-          <span className="text-white/35 text-xs">confidence</span>
+          <span className="text-xl font-extrabold text-[var(--text-primary)]">{pct}%</span>
+          <span className="text-[var(--text-secondary)] text-xs opacity-60">confidence</span>
         </div>
       </div>
     </div>
