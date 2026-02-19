@@ -94,12 +94,16 @@ export default function App() {
       <div className="bg-medical" />
       <div className="grid-overlay" />
       <FloatingIcons />
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col min-h-screen">
         <Header theme={theme} toggleTheme={toggleTheme} />
-        {!result && !loading && <><Hero /><UploadSection onAnalyze={handleAnalysis} error={error} /></>}
-        {loading && <LoadingScreen />}
-        {result && <ResultsDisplay result={result} onReset={() => { setResult(null); setError(null); }} />}
-        <Footer />
+        <main className="flex-1 flex flex-col justify-center">
+          {!result && !loading && <><Hero /><UploadSection onAnalyze={handleAnalysis} error={error} /></>}
+          {loading && <LoadingScreen />}
+          {result && <ResultsDisplay result={result} onReset={() => { setResult(null); setError(null); }} />}
+        </main>
+        <div className="mt-auto">
+          <Footer />
+        </div>
         <Toaster position="bottom-center" toastOptions={{
           style: {
             background: 'var(--card-bg)',

@@ -16,7 +16,7 @@ export default function LoadingScreen() {
   }, []);
 
   return (
-    <div className="relative z-10 flex flex-col items-center justify-center min-h-[65vh] px-6">
+    <div className="relative z-10 flex flex-col items-center justify-center px-6">
       {/* Spinner */}
       <div className="relative w-24 h-24 mb-10">
         <div className="absolute inset-0 rounded-full border-4" style={{ borderColor: 'var(--glass-border)' }} />
