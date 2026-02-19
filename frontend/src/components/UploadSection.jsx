@@ -139,9 +139,7 @@ export default function UploadSection({ onAnalyze, error }) {
           : 'Upload VCF & Select Drug to Continue'}
       </button>
 
-      <p className="text-center text-xs" style={{ color: 'var(--text-secondary)' }}>
-        For research and educational purposes only · Not intended for clinical diagnosis
-      </p>
+
     </div>
   );
 }
