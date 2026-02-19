@@ -94,7 +94,7 @@ GENE_DRUG_RULES = {
             },
             "IM": {
                 "risk_label": "Adjust Dosage",
-                "severity": "high",
+                "severity": "moderate",
                 "confidence_score": 0.82,
                 "recommendation": "Consider alternative antiplatelet agent (prasugrel or ticagrelor). If clopidogrel must be used, higher dose monitoring required.",
                 "mechanism": "Reduced CYP2C19 activity leads to decreased active metabolite formation and suboptimal platelet inhibition."
@@ -247,34 +247,34 @@ GENE_DRUG_RULES = {
 # Variant to Star Allele mapping (rsID -> functional impact)
 VARIANT_STAR_ALLELES = {
     # CYP2D6
-    "rs3892097": {"gene": "CYP2D6", "star_allele": "*4", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs35742686": {"gene": "CYP2D6", "star_allele": "*3", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs5030655": {"gene": "CYP2D6", "star_allele": "*6", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs16947": {"gene": "CYP2D6", "star_allele": "*2", "function": "normal_function", "phenotype_contribution": "NM"},
-    "rs28371725": {"gene": "CYP2D6", "star_allele": "*41", "function": "decreased_function", "phenotype_contribution": "IM"},
-    "rs1065852": {"gene": "CYP2D6", "star_allele": "*10", "function": "decreased_function", "phenotype_contribution": "IM"},
+    "rs3892097": {"gene": "CYP2D6", "star_allele": "*4", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs35742686": {"gene": "CYP2D6", "star_allele": "*3", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs5030655": {"gene": "CYP2D6", "star_allele": "*6", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs16947": {"gene": "CYP2D6", "star_allele": "*2", "function": "normal_function", "activity_score": 1, "phenotype_contribution": "NM"},
+    "rs28371725": {"gene": "CYP2D6", "star_allele": "*41", "function": "decreased_function", "activity_score": 0.5, "phenotype_contribution": "IM"},
+    "rs1065852": {"gene": "CYP2D6", "star_allele": "*10", "function": "decreased_function", "activity_score": 0.5, "phenotype_contribution": "IM"},
     # CYP2C19
-    "rs4244285": {"gene": "CYP2C19", "star_allele": "*2", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs4986893": {"gene": "CYP2C19", "star_allele": "*3", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs12248560": {"gene": "CYP2C19", "star_allele": "*17", "function": "increased_function", "phenotype_contribution": "RM"},
-    "rs28399504": {"gene": "CYP2C19", "star_allele": "*4", "function": "no_function", "phenotype_contribution": "PM"},
+    "rs4244285": {"gene": "CYP2C19", "star_allele": "*2", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs4986893": {"gene": "CYP2C19", "star_allele": "*3", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs12248560": {"gene": "CYP2C19", "star_allele": "*17", "function": "increased_function", "activity_score": 1, "phenotype_contribution": "RM"}, # Technically increased, but often treated as 1+
+    "rs28399504": {"gene": "CYP2C19", "star_allele": "*4", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
     # CYP2C9
-    "rs1799853": {"gene": "CYP2C9", "star_allele": "*2", "function": "decreased_function", "phenotype_contribution": "IM"},
-    "rs1057910": {"gene": "CYP2C9", "star_allele": "*3", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs28371686": {"gene": "CYP2C9", "star_allele": "*5", "function": "no_function", "phenotype_contribution": "PM"},
+    "rs1799853": {"gene": "CYP2C9", "star_allele": "*2", "function": "decreased_function", "activity_score": 0.5, "phenotype_contribution": "IM"},
+    "rs1057910": {"gene": "CYP2C9", "star_allele": "*3", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs28371686": {"gene": "CYP2C9", "star_allele": "*5", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
     # SLCO1B1
-    "rs4149056": {"gene": "SLCO1B1", "star_allele": "*5", "function": "decreased_function", "phenotype_contribution": "PM"},
-    "rs2306283": {"gene": "SLCO1B1", "star_allele": "*1b", "function": "increased_function", "phenotype_contribution": "RM"},
-    "rs11045819": {"gene": "SLCO1B1", "star_allele": "*14", "function": "decreased_function", "phenotype_contribution": "IM"},
+    "rs4149056": {"gene": "SLCO1B1", "star_allele": "*5", "function": "decreased_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs2306283": {"gene": "SLCO1B1", "star_allele": "*1b", "function": "increased_function", "activity_score": 1, "phenotype_contribution": "RM"},
+    "rs11045819": {"gene": "SLCO1B1", "star_allele": "*14", "function": "decreased_function", "activity_score": 0.5, "phenotype_contribution": "IM"},
     # TPMT
-    "rs1800460": {"gene": "TPMT", "star_allele": "*3B", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs1142345": {"gene": "TPMT", "star_allele": "*3C", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs1800462": {"gene": "TPMT", "star_allele": "*2", "function": "no_function", "phenotype_contribution": "PM"},
+    "rs1800460": {"gene": "TPMT", "star_allele": "*3B", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs1142345": {"gene": "TPMT", "star_allele": "*3C", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs1800462": {"gene": "TPMT", "star_allele": "*2", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
     # DPYD
-    "rs3918290": {"gene": "DPYD", "star_allele": "*2A", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs55886062": {"gene": "DPYD", "star_allele": "*13", "function": "no_function", "phenotype_contribution": "PM"},
-    "rs67376798": {"gene": "DPYD", "star_allele": "c.2846A>T", "function": "decreased_function", "phenotype_contribution": "IM"},
-    "rs75017182": {"gene": "DPYD", "star_allele": "HapB3", "function": "decreased_function", "phenotype_contribution": "IM"},
+    "rs3918290": {"gene": "DPYD", "star_allele": "*2A", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs55886062": {"gene": "DPYD", "star_allele": "*13", "function": "no_function", "activity_score": 0, "phenotype_contribution": "PM"},
+    "rs67376798": {"gene": "DPYD", "star_allele": "c.2846A>T", "function": "decreased_function", "activity_score": 0.5, "phenotype_contribution": "IM"},
+    "rs75017182": {"gene": "DPYD", "star_allele": "HapB3", "function": "decreased_function", "activity_score": 0.5, "phenotype_contribution": "IM"},
 }
 
 GENE_TO_DRUG = {

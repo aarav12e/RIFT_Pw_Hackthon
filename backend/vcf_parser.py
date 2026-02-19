@@ -121,6 +121,11 @@ def extract_pharmacogenomic_variants(parsed_vcf: Dict, target_gene: str) -> List
         if rsid_lower in seen_rsids:
             continue
             
+        # CRITICAL FIX: skip if genotype is homozygous reference (0/0) or missing
+        # We only care about variants that are actually present
+        if v.genotype in ["0/0", "0|0", "./.", ".|.", ".", None]:
+            continue
+
         # Check by rsID in known database
         if rsid_lower in VARIANT_STAR_ALLELES:
             info = VARIANT_STAR_ALLELES[rsid_lower]
@@ -135,6 +140,7 @@ def extract_pharmacogenomic_variants(parsed_vcf: Dict, target_gene: str) -> List
                     "gene": info["gene"],
                     "star_allele": info["star_allele"],
                     "function_status": info["function"],
+                    "activity_score": info.get("activity_score", 0), # Default to 0 if not found for PGx variants
                     "genotype": v.genotype or "unknown"
                 })
         # Also check by gene annotation in VCF
@@ -149,6 +155,7 @@ def extract_pharmacogenomic_variants(parsed_vcf: Dict, target_gene: str) -> List
                 "gene": target_gene,
                 "star_allele": v.star_allele or "unknown",
                 "function_status": "unknown",
+                "activity_score": 0,
                 "genotype": v.genotype or "unknown"
             })
 
@@ -163,29 +170,48 @@ def determine_phenotype(variants: List[Dict], gene: str) -> str:
     if not variants:
         return "NM"  # Default: Normal Metabolizer if no variants found
 
-    function_statuses = [v.get("function_status", "normal_function") for v in variants]
+    # Activity Score Logic (CPIC Standard)
+    # Default alleles: *1/*1 (Score 1.0 + 1.0 = 2.0)
+    allele_scores = [1.0, 1.0] 
 
-    no_function_count = sum(1 for f in function_statuses if f == "no_function")
-    decreased_count = sum(1 for f in function_statuses if f == "decreased_function")
-    increased_count = sum(1 for f in function_statuses if f == "increased_function")
+    if len(variants) == 1:
+        # One variant detected.
+        v = variants[0]
+        score = v.get("activity_score", 1.0) # Default to 1 if unknown, but usually 0 for variants in our list
+        
+        # Check zygosity
+        gt = v.get("genotype", "")
+        if gt in ["1/1", "1|1"]:
+            # Homozygous for the variant: *Var/*Var
+            allele_scores = [score, score]
+        else:
+            # Heterozygous: *1/*Var
+            allele_scores = [1.0, score]
 
-    # Simplified diplotype → phenotype logic
-    if no_function_count >= 2:
-        return "PM"
-    elif no_function_count == 1 and decreased_count >= 1:
-        return "IM"
-    elif no_function_count == 1:
-        return "IM"
-    elif decreased_count >= 2:
-        return "IM"
-    elif decreased_count == 1:
-        return "IM"
-    elif increased_count >= 2:
-        return "URM"
-    elif increased_count == 1:
-        return "RM"
-    else:
+    elif len(variants) >= 2:
+        # Two or more variants. 
+        # Simplified: Take the top 2 impacted alleles (lowest scores) to be conservative, 
+        # or assume compound heterozygosity for the first two found.
+        # Strict logic: *A/*B
+        v1 = variants[0]
+        v2 = variants[1]
+        score1 = v1.get("activity_score", 1.0)
+        score2 = v2.get("activity_score", 1.0)
+        allele_scores = [score1, score2]
+
+    total_activity_score = sum(allele_scores)
+
+    # Phenotype Mapping based on Total Activity Score
+    # >= 1.5 -> NM (Normal Metabolizer)
+    # 1.0   -> IM (Intermediate Metabolizer)
+    # <= 0.5 -> PM (Poor Metabolizer)
+    
+    if total_activity_score >= 1.5:
         return "NM"
+    elif total_activity_score >= 1.0:
+        return "IM"
+    else:
+        return "PM"
 
 
 def get_diplotype(variants: List[Dict]) -> str:

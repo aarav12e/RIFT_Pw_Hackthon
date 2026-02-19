@@ -21,7 +21,7 @@ def generate_clinical_explanation(
     recommendation: str, mechanism: str
 ) -> Dict:
 
-    variant_list = ", ".join([v.get("rsid", "unknown") for v in detected_variants]) if detected_variants else "No pharmacogenomic variants detected"
+    variant_list = ", ".join([v.get("rsid", "unknown") for v in detected_variants]) if detected_variants else "None"
     star_alleles  = ", ".join([v.get("star_allele", "unknown") for v in detected_variants]) if detected_variants else "*1/*1 (reference)"
 
     prompt = f"""You are a clinical pharmacogenomics expert. Generate a structured clinical explanation.
@@ -38,7 +38,7 @@ PATIENT PROFILE:
 
 Return ONLY valid JSON with EXACTLY these fields:
 {{
-  "summary": "2-3 sentence clinical summary citing specific variants and their impact on {drug} therapy",
+  "summary": "2-3 sentence clinical summary citing specific variants and their impact on {drug} therapy. If Variants is 'None', state that no actionable variants were detected.",
   "mechanism_explanation": "Detailed molecular explanation of how {gene} variants affect {drug}",
   "patient_friendly": "Simple 2-3 sentence explanation for a patient without medical background",
   "clinical_significance": "Why this finding matters clinically and what happens if ignored",
@@ -46,7 +46,7 @@ Return ONLY valid JSON with EXACTLY these fields:
   "alternative_drugs": "Specific alternative medications to consider if applicable"
 }}
 
-Be specific, cite exact variants ({variant_list}), reference CPIC guidelines. Return ONLY valid JSON, no markdown."""
+Be specific, cite exact variants ({variant_list}) if present, reference CPIC guidelines. Return ONLY valid JSON, no markdown."""
 
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
@@ -99,8 +99,13 @@ Be specific, cite exact variants ({variant_list}), reference CPIC guidelines. Re
             article = "a"
             risk_desc = risk_label.lower()
 
+        if detected_variants:
+            summary_text = f"This patient carries {gene} variants {diplotype} consistent with a {phenotype} phenotype, predicting {article} {risk_desc} response to {drug} therapy. Detected variants {variant_list} alter {gene} enzyme function per CPIC guidelines."
+        else:
+            summary_text = f"This patient carries {gene} {diplotype} consistent with a Normal Metabolizer phenotype. No clinically actionable pharmacogenomic variants were detected according to CPIC guidelines."
+
         return {
-            "summary": f"This patient carries {gene} variants {diplotype} consistent with a {phenotype} phenotype, predicting {article} {risk_desc} response to {drug} therapy. Detected variants {variant_list} alter {gene} enzyme function per CPIC guidelines.",
+            "summary": summary_text,
             "mechanism_explanation": mechanism,
             "patient_friendly": patient_msg,
             "clinical_significance": significance,
