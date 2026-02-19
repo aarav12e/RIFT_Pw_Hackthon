@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Lenis from 'lenis';
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import UploadSection from "./components/UploadSection";
@@ -49,6 +50,22 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    const lenis = new Lenis();
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
 
   const toggleTheme = () => {
     setTheme(prev => prev === "dark" ? "light" : "dark");
