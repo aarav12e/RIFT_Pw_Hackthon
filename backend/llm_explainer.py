@@ -86,8 +86,21 @@ Be specific, cite exact variants ({variant_list}), reference CPIC guidelines. Re
             patient_msg   = f"Your genetic profile indicates that {drug} can be used at standard doses. Your {gene} gene variants show normal drug metabolism."
             significance  = f"This finding indicates {severity_text}. Standard dosing is appropriate for this patient."
 
+        if risk_label == "Ineffective":
+            article = "an"
+            risk_desc = "ineffective"
+        elif risk_label == "Adjust Dosage":
+            article = "an"
+            risk_desc = "adjusted dosage"
+        elif risk_label == "Toxic":
+            article = "a"
+            risk_desc = "toxic"
+        else:
+            article = "a"
+            risk_desc = risk_label.lower()
+
         return {
-            "summary": f"This patient carries {gene} variants {diplotype} consistent with a {phenotype} phenotype, predicting a {risk_label.lower()} response to {drug} therapy. Detected variants {variant_list} alter {gene} enzyme function per CPIC guidelines.",
+            "summary": f"This patient carries {gene} variants {diplotype} consistent with a {phenotype} phenotype, predicting {article} {risk_desc} response to {drug} therapy. Detected variants {variant_list} alter {gene} enzyme function per CPIC guidelines.",
             "mechanism_explanation": mechanism,
             "patient_friendly": patient_msg,
             "clinical_significance": significance,

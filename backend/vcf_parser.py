@@ -113,13 +113,20 @@ def extract_pharmacogenomic_variants(parsed_vcf: Dict, target_gene: str) -> List
     variants = parsed_vcf.get("variants", [])
     pgx_variants = []
 
+    seen_rsids = set()
+    unique_pgx_variants = []
+
     for v in variants:
         rsid_lower = v.rsid.lower()
+        if rsid_lower in seen_rsids:
+            continue
+            
         # Check by rsID in known database
         if rsid_lower in VARIANT_STAR_ALLELES:
             info = VARIANT_STAR_ALLELES[rsid_lower]
             if info["gene"] == target_gene:
-                pgx_variants.append({
+                seen_rsids.add(rsid_lower)
+                unique_pgx_variants.append({
                     "rsid": v.rsid,
                     "chromosome": v.chrom,
                     "position": v.pos,
@@ -132,7 +139,8 @@ def extract_pharmacogenomic_variants(parsed_vcf: Dict, target_gene: str) -> List
                 })
         # Also check by gene annotation in VCF
         elif v.gene == target_gene and v.rsid != f"pos_{v.pos}":
-            pgx_variants.append({
+            seen_rsids.add(rsid_lower)
+            unique_pgx_variants.append({
                 "rsid": v.rsid,
                 "chromosome": v.chrom,
                 "position": v.pos,
@@ -144,7 +152,7 @@ def extract_pharmacogenomic_variants(parsed_vcf: Dict, target_gene: str) -> List
                 "genotype": v.genotype or "unknown"
             })
 
-    return pgx_variants
+    return unique_pgx_variants
 
 
 def determine_phenotype(variants: List[Dict], gene: str) -> str:
