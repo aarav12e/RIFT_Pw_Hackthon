@@ -1,0 +1,10 @@
+##fileformat=VCFv4.2
+##fileDate=20260219
+##source=PharmaGuardTestData
+##reference=GRCh38
+##INFO=<ID=GENE,Number=1,Type=String,Description="Gene name">
+##INFO=<ID=STAR,Number=1,Type=String,Description="Star allele">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	PATIENT_PM_WARFARIN
+chr10	94942290	rs1799853	C	T	99	PASS	GENE=CYP2C9;STAR=*2	GT	0|1
+chr10	94981296	rs1057910	A	C	99	PASS	GENE=CYP2C9;STAR=*3	GT	0|1

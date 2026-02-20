@@ -1,0 +1,10 @@
+##fileformat=VCFv4.2
+##fileDate=20260219
+##source=PharmaGuardTestData
+##reference=GRCh38
+##INFO=<ID=GENE,Number=1,Type=String,Description="Gene name">
+##INFO=<ID=STAR,Number=1,Type=String,Description="Star allele">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	PATIENT_PM_SIMVA
+chr12	21331549	rs4149056	T	C	99	PASS	GENE=SLCO1B1;STAR=*5	GT	1|1
+chr12	21386710	rs11045819	A	C	99	PASS	GENE=SLCO1B1;STAR=*14	GT	0|1

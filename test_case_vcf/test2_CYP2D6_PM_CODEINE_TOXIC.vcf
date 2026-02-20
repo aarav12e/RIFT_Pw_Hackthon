@@ -1,0 +1,10 @@
+##fileformat=VCFv4.2
+##fileDate=20260219
+##source=PharmaGuardTestData
+##reference=GRCh38
+##INFO=<ID=GENE,Number=1,Type=String,Description="Gene name">
+##INFO=<ID=STAR,Number=1,Type=String,Description="Star allele">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	PATIENT_PM_CODEINE
+chr22	42522613	rs3892097	G	A	99	PASS	GENE=CYP2D6;STAR=*4	GT	1|1
+chr22	42523943	rs35742686	C	T	99	PASS	GENE=CYP2D6;STAR=*3	GT	0|1

@@ -1,0 +1,10 @@
+##fileformat=VCFv4.2
+##fileDate=20260219
+##source=PharmaGuardTestData
+##reference=GRCh38
+##INFO=<ID=GENE,Number=1,Type=String,Description="Gene name">
+##INFO=<ID=STAR,Number=1,Type=String,Description="Star allele">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	PATIENT_PM_FLUORO
+chr1	97915614	rs3918290	C	T	99	PASS	GENE=DPYD;STAR=*2A	GT	1|1
+chr1	97981343	rs55886062	A	T	99	PASS	GENE=DPYD;STAR=*13	GT	0|1

@@ -8,10 +8,9 @@
 
 | | Link |
 |---|---|
-| 🌐 **Live Demo** | `https://your-app.vercel.app` *(update this)* |
-| 🎥 **LinkedIn Video** | `https://linkedin.com/posts/your-video` *(update this)* |
-| 💻 **GitHub Repo** | `https://github.com/yourusername/pharmaguard` *(update this)* |
-| 🔧 **Backend API** | `https://your-api.onrender.com` *(update this)* |
+| 🌐 **Live Demo** | [rift-pw-hackthon.vercel.app](https://rift-pw-hackthon.vercel.app/) |
+| 🎥 **LinkedIn Video** | [Watch Demo Video](https://www.linkedin.com/posts/aarav12e_rift2026-pw-pharmaguard-activity-7430418046474747904-1B5T) |
+| 💻 **GitHub Repo** | [aarav12e/RIFT_Pw_Hackthon](https://github.com/aarav12e/RIFT_Pw_Hackthon) |
 
 ---
 
@@ -109,8 +108,8 @@ React UI — Color-coded results, confidence gauge, downloadable JSON
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/pharmaguard.git
-cd pharmaguard/backend
+git clone https://github.com/aarav12e/RIFT_Pw_Hackthon.git
+cd RIFT_Pw_Hackthon/backend
 
 # Install dependencies
 pip install -r requirements.txt
@@ -127,7 +126,7 @@ uvicorn main:app --reload --port 8000
 ### Frontend Setup
 
 ```bash
-cd pharmaguard/frontend
+cd RIFT_Pw_Hackthon/frontend
 
 # Install dependencies
 npm install
@@ -227,21 +226,24 @@ Returns list of supported drugs and genes.
 
 ## 🧪 Usage Examples
 
-### Testing with Sample VCF Files
+### Predefined Clinical Scenarios
 
-| VCF File | Drug to Select | Expected Result |
+Use the built-in scenario buttons on the dashboard to instantly test all risk levels:
+
+| Scenario | Drug | Expected Result |
 |---|---|---|
-| `patient_001_test.vcf` | CODEINE | ☠️ Toxic (CYP2D6 PM) |
-| `patient_002_dpyd_pm.vcf` | FLUOROURACIL | ☠️ Toxic / Critical |
-| Normal patient VCF | Any drug | ✅ Safe |
+| ✅ Normal — Reference Genotype | CODEINE | Safe · Normal Metabolizer |
+| ⚠️ Action — Warfarin Dose Adjustment | WARFARIN | Adjust Dosage · High Severity |
+| 🔴 Risk — Simvastatin High Risk | SIMVASTATIN | Adjust Dosage · Moderate/High |
+| ☠️ Toxic — Fluorouracil Contraindicated | FLUOROURACIL | Toxic · Critical Severity |
 
 ### Quick Demo Flow (for judges)
 
-1. Open the live URL
-2. Click **"🔴 Critical"** sample button (auto-loads Fluorouracil test case)
+1. Open [rift-pw-hackthon.vercel.app](https://rift-pw-hackthon.vercel.app/)
+2. Click **"☠️ Toxic — Fluorouracil Contraindicated"** scenario
 3. Click **"Analyze 1 Drug →"**
-4. See critical red result with AI explanation
-5. Click **"↓ Download JSON"** to show output schema compliance
+4. See the critical red result with AI explanation
+5. Click **"↓ Download JSON"** to verify schema compliance
 
 ---
 
@@ -256,13 +258,13 @@ Returns list of supported drugs and genes.
 
 ---
 
-## 👥 Team Members
+## 👥 Team BugByte
 
 | Name | Role |
 |---|---|
-| *(Add your name)* | Full Stack + AI |
-| *(Add teammate)* | Frontend |
-| *(Add teammate)* | Backend |
+| **Aarav Kumar** | Team Lead · Full Stack + AI |
+| **Archana Kumari** | Frontend Development |
+| **Tanya Kumari** | Backend Development |
 
 ---
 
@@ -272,4 +274,4 @@ Returns list of supported drugs and genes.
 
 ---
 
-*Built with ❤️ for RIFT 2026 Hackathon — HealthTech / Pharmacogenomics Track*
+*Built with ❤️ by Team BugByte for RIFT 2026 Hackathon — HealthTech / Pharmacogenomics Track*

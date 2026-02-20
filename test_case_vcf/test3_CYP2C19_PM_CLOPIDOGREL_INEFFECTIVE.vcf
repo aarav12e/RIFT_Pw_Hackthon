@@ -1,0 +1,10 @@
+##fileformat=VCFv4.2
+##fileDate=20260219
+##source=PharmaGuardTestData
+##reference=GRCh38
+##INFO=<ID=GENE,Number=1,Type=String,Description="Gene name">
+##INFO=<ID=STAR,Number=1,Type=String,Description="Star allele">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	PATIENT_PM_CLOPI
+chr10	96741053	rs4244285	G	A	99	PASS	GENE=CYP2C19;STAR=*2	GT	1|1
+chr10	96522463	rs4986893	G	A	99	PASS	GENE=CYP2C19;STAR=*3	GT	0|1
