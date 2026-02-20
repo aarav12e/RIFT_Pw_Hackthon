@@ -2,6 +2,8 @@
 
 > AI-powered web application that analyzes patient genetic data (VCF files) and predicts personalized drug risks using CPIC guidelines + Google Gemini AI explanations.
 
+![PharmaGuard Preview](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2020-02-2026%2006_56_56.png)
+
 ---
 
 ## 🔗 Important Links
