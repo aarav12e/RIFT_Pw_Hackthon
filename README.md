@@ -2,7 +2,13 @@
 
 > AI-powered web application that analyzes patient genetic data (VCF files) and predicts personalized drug risks using CPIC guidelines + Google Gemini AI explanations.
 
-![PharmaGuard Preview](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2020-02-2026%2006_56_56.png)
+| | |
+|:--:|:--:|
+| ![Screen 1](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2019-02-2026%2018_46_50.png) | ![Screen 2](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2019-02-2026%2020_30_44.png) |
+| ![Screen 3](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2020-02-2026%2006_56_08.png) | ![Screen 4](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2020-02-2026%2006_56_15.png) |
+| ![Screen 5](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2020-02-2026%2006_56_23.png) | ![Screen 6](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2020-02-2026%2006_56_37.png) |
+| ![Screen 7](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2020-02-2026%2006_56_42.png) | ![Screen 8](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2020-02-2026%2006_56_51.png) |
+| ![Screen 9](frontend/public/PharmaGuard%20—%20Pharmacogenomic%20Risk%20Prediction%20-%20Brave%2020-02-2026%2006_56_56.png) | |
 
 ---
 
