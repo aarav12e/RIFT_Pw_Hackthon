@@ -116,7 +116,7 @@ pip install -r requirements.txt
 
 # Create environment file
 cp .env.example .env
-# Add your GEMINI_API_KEY inside .env
+# Edit .env and add your GEMINI_API_KEY
 
 # Start backend server
 uvicorn main:app --reload --port 8000
@@ -139,6 +139,18 @@ npm run dev
 # Runs at http://localhost:5173
 ```
 
+### Environment Variables
+
+Backend `.env.example`:
+```
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+Frontend `.env.local`:
+```
+VITE_API_URL=https://your-render-backend.onrender.com
+```
+
 ---
 
 ## 📋 API Documentation
@@ -156,7 +168,7 @@ Analyzes a VCF file for pharmacogenomic drug interactions.
 
 **Supported drugs:** `CODEINE`, `WARFARIN`, `CLOPIDOGREL`, `SIMVASTATIN`, `AZATHIOPRINE`, `FLUOROURACIL`
 
-**Response:**
+**Single drug response:**
 
 ```json
 {
@@ -203,17 +215,15 @@ Analyzes a VCF file for pharmacogenomic drug interactions.
 }
 ```
 
-### `GET /health`
+**Multiple drugs response:** Returns a JSON array of the above objects, one per drug.
 
-Health check endpoint.
+### `GET /health`
 
 ```json
 { "status": "healthy" }
 ```
 
 ### `GET /supported-drugs`
-
-Returns list of supported drugs and genes.
 
 ```json
 {
@@ -224,26 +234,37 @@ Returns list of supported drugs and genes.
 
 ---
 
-## 🧪 Usage Examples
+## 🧪 Sample VCF Files
 
-### Predefined Clinical Scenarios
+Located in the `sample_vcf/` folder — use these to test all risk scenarios:
 
-Use the built-in scenario buttons on the dashboard to instantly test all risk levels:
+| File | Clinical Scenario | Drug | Expected Result |
+|---|---|---|---|
+| `test1_normal_metabolizer_SAFE.vcf` | ✅ Normal — Reference Genotype | CODEINE | Safe · NM |
+| `test4_CYP2C9_PM_WARFARIN_ADJUST.vcf` | ⚠️ Warfarin Dose Adjustment | WARFARIN | Adjust Dosage · High |
+| `test7_SLCO1B1_PM_SIMVASTATIN_TOXIC.vcf` | 🔴 Simvastatin High Risk | SIMVASTATIN | Adjust Dosage · Moderate |
+| `test6_DPYD_PM_FLUOROURACIL_CRITICAL.vcf` | ☠️ Fluorouracil Contraindicated | FLUOROURACIL | Toxic · Critical |
 
-| Scenario | Drug | Expected Result |
-|---|---|---|
-| ✅ Normal — Reference Genotype | CODEINE | Safe · Normal Metabolizer |
-| ⚠️ Action — Warfarin Dose Adjustment | WARFARIN | Adjust Dosage · High Severity |
-| 🔴 Risk — Simvastatin High Risk | SIMVASTATIN | Adjust Dosage · Moderate/High |
-| ☠️ Toxic — Fluorouracil Contraindicated | FLUOROURACIL | Toxic · Critical Severity |
+---
+
+## 🎯 Usage Examples
 
 ### Quick Demo Flow (for judges)
 
 1. Open [rift-pw-hackthon.vercel.app](https://rift-pw-hackthon.vercel.app/)
-2. Click **"☠️ Toxic — Fluorouracil Contraindicated"** scenario
+2. Click **"☠️ Toxic — Fluorouracil Contraindicated"** predefined scenario
 3. Click **"Analyze 1 Drug →"**
-4. See the critical red result with AI explanation
-5. Click **"↓ Download JSON"** to verify schema compliance
+4. See the critical red result with AI clinical explanation
+5. Click **"↓ Download JSON"** to verify RIFT schema compliance
+
+### Predefined Clinical Scenarios (on Dashboard)
+
+| Scenario Button | Drug | Expected Result |
+|---|---|---|
+| ✅ Normal — Reference Genotype | CODEINE | Safe · Normal Metabolizer |
+| ⚠️ Action — Warfarin Dose Adjustment | WARFARIN | Adjust Dosage · High Severity |
+| 🔴 Risk — Simvastatin High Risk | SIMVASTATIN | Adjust Dosage · Moderate |
+| ☠️ Toxic — Fluorouracil Contraindicated | FLUOROURACIL | Toxic · Critical Severity |
 
 ---
 
@@ -275,3 +296,5 @@ Use the built-in scenario buttons on the dashboard to instantly test all risk le
 ---
 
 *Built with ❤️ by Team BugByte for RIFT 2026 Hackathon — HealthTech / Pharmacogenomics Track*
+
+*Hashtags: #RIFT2026 #PharmaGuard #Pharmacogenomics #AIinHealthcare*
